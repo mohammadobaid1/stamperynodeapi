@@ -18,6 +18,18 @@ app.use(bodyParser.urlencoded({
 }));
 
 
+var mysql = require('mysql');
+var pool  = mysql.createPool({
+  connectionLimit : 10,
+  host            : 'localhost',
+  user            : 'root',
+  password        : '123456',
+  database        : 'freelanceproject'
+});
+
+
+
+
 var stampery = new Stampery('87cd2fdd-02a7-4eef-c647-1b73d280f62a');
 
 
@@ -92,7 +104,125 @@ stampery.getById(stampid).then((stamp) => {
 })
 
 
-var port=process.env.PORT || 8080;
+
+
+
+app.post('/saverecord',function(req,res){
+
+var name = req.body.name;
+var nric =  req.body.nric;
+var fathername = req.body.fathername;
+var cgpa = req.body.cgpa;
+
+console.log("Name",name);
+//console.log("id",id);
+ // var rollnumber =  req.body.rollnumber;
+// var enrollmentnumber = req.body.enrollmentnumber;
+// var batchname = req.body.batchname;
+// var cgpa = req.body.cgpa;
+// var date_of_graduation = req.body.graduation;
+
+// console.log("Student Name",studentname);
+// console.log("Father Name",fathername);
+
+var payload = {
+'name':name,
+'fathername':fathername,
+'nric':nric,
+'cgpa':cgpa
+}
+
+var finalpayload = JSON.stringify(payload);
+
+ const hash = stampery.hash(finalpayload);
+  stampery.stamp(hash).then((stamp) => {
+  console.log("Stamp id",stamp.time);
+  var stampinfo = {
+    'stampid':stamp.id,
+    'timestamp':stamp.time
+}
+
+var sqlquery =  "Insert into record_table(STUDENT_NAME,FATHER_NAME,nric,cgpa,stamperyid,timestamp) values ('"+name+"','"+fathername+"','"+nric+"','"+cgpa+"','"+stamp.id+"','"+stamp.time+"')"; 
+pool.getConnection(function(err, connection) {
+  if (err) throw err; // not connected!
+  connection.query(sqlquery, function (error, results) {
+    connection.release();
+    if (error) throw error;
+    res.send(stampinfo);
+
+  });
+});
+
+
+}).catch((err) => {
+  res.send("Error in creating stamp");
+});
+
+console.log(finalpayload);
+
+
+
+});
+
+
+app.post('/getrecordbystamperyid',function(req,res){
+
+
+var stamperyid = req.body.stamperyid;
+
+
+
+stampery.getById(stamperyid).then((stamp) => {
+   console.log("Stamp",stamp.length);
+   if (stamp.length == 0) {
+   res.send('false');
+
+}
+   var stamparse = stamp.filter(function(el) {
+   var receipts = el.receipts;
+
+   var validity = stampery.prove(receipts);
+   pool.getConnection(function(err, connection) {
+  if (err) throw err; // not connected!
+  connection.query("select * from record_table where stamperyid='"+stamperyid+"'", function (error, results) {
+    connection.release();
+    if (error) throw error;
+    var jsonresults = results;
+    var studentname = jsonresults[0].STUDENT_NAME;
+    var fathername = jsonresults[0].FATHER_NAME;
+    var cgpa = jsonresults[0].cgpa;
+    var nric = jsonresults[0].nric;
+    var stamperyid = jsonresults[0].stamperyid;
+    var timestamp = jsonresults[0].timestamp; 
+    var finaljsonpayload={
+    "studentname":studentname,
+    "fathername":fathername,
+    "cgpa":cgpa,
+    "nric":nric,
+    "stamperyid":stamperyid,
+    "timestamp":timestamp,
+    "validity":validity
+
+}
+    res.send(finaljsonpayload);
+      
+  });
+});
+ 
+
+}).catch((err) => {
+  return console.error(err);
+});
+
+});
+
+
+});
+
+
+
+
+var port=process.env.PORT || 4000;
 app.listen(port);
 
 
