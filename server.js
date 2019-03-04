@@ -33,6 +33,13 @@ var pool  = mysql.createPool({
 var stampery = new Stampery('87cd2fdd-02a7-4eef-c647-1b73d280f62a');
 
 
+
+app.get('/',function(req,res){
+
+res.send("Hello world");
+
+})
+
 app.post('/postrecord',function(req,res){
 
 var name = req.body.name;
