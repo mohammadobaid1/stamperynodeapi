@@ -21,7 +21,7 @@ app.use(bodyParser.urlencoded({
 var mysql = require('mysql');
 var pool  = mysql.createPool({
   connectionLimit : 10,
-  host            : '172.30.180.246',
+  host            : '172.30.63.26',
   user            : 'blockshift',
   password        : 'Blockshift4',
   database        : 'freelanceproject'
@@ -119,7 +119,7 @@ app.post('/saverecord',function(req,res){
 var name = req.body.name;
 var nric =  req.body.nric;
 var coursename = req.body.coursename;
-var cgpa = req.body.cgpa;
+// var cgpa = req.body.cgpa;
 var startdate = req.body.startdate;
 var enddate = req.body.enddate;
 
