@@ -199,15 +199,17 @@ stampery.getById(stamperyid).then((stamp) => {
     if (error) throw error;
     var jsonresults = results;
     var studentname = jsonresults[0].STUDENT_NAME;
-    var fathername = jsonresults[0].FATHER_NAME;
-    var cgpa = jsonresults[0].cgpa;
+    var coursename = jsonresults[0].coursename;
+    var startdate = jsonresults[0].startdate;
+    var enddate = jsonresults[0].enddate;
     var nric = jsonresults[0].nric;
     var stamperyid = jsonresults[0].stamperyid;
     var timestamp = jsonresults[0].timestamp; 
     var finaljsonpayload={
     "studentname":studentname,
-    "fathername":fathername,
-    "cgpa":cgpa,
+    "coursename":coursename,
+    "startdate":startdate,
+    "enddate":enddate,
     "nric":nric,
     "stamperyid":stamperyid,
     "timestamp":timestamp,
