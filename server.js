@@ -118,8 +118,10 @@ app.post('/saverecord',function(req,res){
 
 var name = req.body.name;
 var nric =  req.body.nric;
-var fathername = req.body.fathername;
+var coursename = req.body.coursename;
 var cgpa = req.body.cgpa;
+var startdate = req.body.startdate;
+var enddate = req.body.enddate;
 
 console.log("Name",name);
 //console.log("id",id);
@@ -134,9 +136,10 @@ console.log("Name",name);
 
 var payload = {
 'name':name,
-'fathername':fathername,
 'nric':nric,
-'cgpa':cgpa
+'coursename':coursename,
+'startdate':startdate,
+'enddate':enddate
 }
 
 var finalpayload = JSON.stringify(payload);
@@ -149,7 +152,7 @@ var finalpayload = JSON.stringify(payload);
     'timestamp':stamp.time
 }
 
-var sqlquery =  "Insert into record_table(STUDENT_NAME,FATHER_NAME,nric,cgpa,stamperyid,timestamp) values ('"+name+"','"+fathername+"','"+nric+"','"+cgpa+"','"+stamp.id+"','"+stamp.time+"')"; 
+var sqlquery =  "Insert into record_table(STUDENT_NAME,coursename,nric,startdate,enddate,stamperyid,timestamp) values ('"+name+"','"+coursename+"','"+nric+"','"+startdate+"','"+enddate+"','"+stamp.id+"','"+stamp.time+"')"; 
 pool.getConnection(function(err, connection) {
   if (err) throw err; // not connected!
   connection.query(sqlquery, function (error, results) {
