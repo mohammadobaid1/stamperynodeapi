@@ -165,7 +165,7 @@ pool.getConnection(function(err, connection) {
 
 
 }).catch((err) => {
-  res.send("Error in creating stamp");
+  res.send(err);
 });
 
 console.log(finalpayload);
